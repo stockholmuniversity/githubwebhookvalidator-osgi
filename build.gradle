@@ -1,0 +1,60 @@
+buildscript {
+  repositories {
+    maven {
+      url "https://maven.it.su.se/it.su.se/maven2"
+    }
+    dependencies {
+      classpath 'org.hibernate.build.gradle:gradle-maven-publish-auth:2.0.1'
+    }
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: 'maven-publish-auth'
+apply plugin: 'osgi'
+
+repositories {
+  maven {
+    url "https://maven.it.su.se/it.su.se/maven2"
+  }
+}
+
+dependencies {
+  compile 'commons-codec:commons-codec:1.11'
+  compile 'org.apache.camel:camel-core:2.15.2'
+  compile 'org.slf4j:slf4j-api:1.7.25'
+}
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+version = '1.1.0'
+group = 'se.su.it.osgi.githubwebhookvalidator'
+description = "Stockholm University :: Github webhook validator"
+
+jar {
+
+  manifest {
+    instruction 'Export-Package', "se.su.it.osgi.githubwebhookvalidator;version=\"$version\""
+    instruction 'Import-Package', "se.su.it.osgi.githubwebhookvalidator;version=\"$version\"",
+                                  'org.apache.camel;version="[2.15,3)"',
+                                  'org.apache.commons.codec.digest;version="[1.11,2)',
+                                  'org.slf4j;version="[1.7,2)"'
+  }
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+    }
+  }
+
+  repositories {
+    maven {
+      name "maven.it.su.se"
+      url "https://maven.it.su.se/nexus/content/repositories/it.su.se-jenkins-dev/"
+    }
+  }
+}
